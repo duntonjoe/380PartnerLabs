@@ -4,6 +4,13 @@ struct fs_t {
 
 };
 
+struct inode {
+  char name[16];        //file name
+  int size;             // file size (in number of blocks)
+  int blockPointers[8]; // direct block pointers
+  int used;             // 0 => inode is free; 1 => in use
+}
+
 // open the file with the above name
 void fs_open(struct fs_t* fs, char diskName[16]) {
    // this file will act as the "disk" for your file system
@@ -48,14 +55,14 @@ void fs_create(struct fs_t* fs, char name[16], int size) {
   // Write out the 128 byte free block list
   // Move the file pointer to the position on disk where this inode was stored
   // Write out the inode
-	char[128] freeList;
+	char freeList[128];
 	int freeBlocks = 0;
 	
 	if(size > 8){
 		return;
 	}
 
-	lseek(name, SEEK_SET, 0);
+	lseek(name, 0, SEEK_SET);		//Free List is first 128 bytes of disk
 	read(fs->fileDesc, freeList, 128);
 	for(int i = 0; i <= 128; ++i){
 		if(!freeList[i]){
@@ -65,7 +72,22 @@ void fs_create(struct fs_t* fs, char name[16], int size) {
 	if(size >= freeBlocks){
 		return;
 	}
-
+	//END STEP 1
+	inode currInode;
+	for(int i = 0; i <= 128; ++ i){
+		read(fs->fileDesc, &currInode, size_of(inode));
+		if(!currInode->used){
+			currInode->used = 1;
+			currInode->name = name;
+			currInode->size = size;
+			break;
+		}	
+	}
+	//END STEP 2
+	int inodeIndex;
+	for(int i=0; i<size; i++){
+		
+	}
 	
 
 }
