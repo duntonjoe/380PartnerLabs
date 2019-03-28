@@ -35,26 +35,6 @@ void fs_create(struct fs_t* fs, char name[16], int size) {
   // Scan the list to make sure you have sufficient free blocks to
   // allocate a new file of this size
 
-  // Step 2: we look  for a free inode on disk
-  // Read in a inode
-  // check the "used" field to see if it is free
-  // If not, repeat the above two steps until you find a free inode
-  // Set the "used" field to 1
-  // Copy the filename to the "name" field
-  // Copy the file size (in units of blocks) to the "size" field
-
-  // Step 3: Allocate data blocks to the file
-  // for(i=0;i<size;i++)
-  // Scan the block list that you read in Step 1 for a free block
-  // Once you find a free block, mark it as in-use (Set it to 1)
-  // Set the blockPointer[i] field in the inode to this block number.
-  // end for
-
-  // Step 4: Write out the inode and free block list to disk
-  // Move the file pointer to the start of the file
-  // Write out the 128 byte free block list
-  // Move the file pointer to the position on disk where this inode was stored
-  // Write out the inode
 	char freeList[128];
 	int freeBlocks = 0;
 	
@@ -72,7 +52,15 @@ void fs_create(struct fs_t* fs, char name[16], int size) {
 	if(size >= freeBlocks){
 		return;
 	}
-	//END STEP 1
+
+  // Step 2: we look  for a free inode on disk
+  // Read in a inode
+  // check the "used" field to see if it is free
+  // If not, repeat the above two steps until you find a free inode
+  // Set the "used" field to 1
+  // Copy the filename to the "name" field
+  // Copy the file size (in units of blocks) to the "size" field
+
 	inode currInode;
 	for(int i = 0; i <= 128; ++ i){
 		read(fs->fileDesc, &currInode, size_of(inode));
@@ -83,13 +71,26 @@ void fs_create(struct fs_t* fs, char name[16], int size) {
 			break;
 		}	
 	}
-	//END STEP 2
+
+  // Step 3: Allocate data blocks to the file
+  // for(i=0;i<size;i++)
+  // Scan the block list that you read in Step 1 for a free block
+  // Once you find a free block, mark it as in-use (Set it to 1)
+  // Set the blockPointer[i] field in the inode to this block number.
+  // end for
+
 	int inodeIndex;
 	for(int i=0; i<size; i++){
 		
 	}
 	
+  // Step 4: Write out the inode and free block list to disk
+  // Move the file pointer to the start of the file
+  // Write out the 128 byte free block list
+  // Move the file pointer to the position on disk where this inode was stored
+  // Write out the inode
 
+  
 }
 
 // Delete the file with this name
@@ -126,10 +127,17 @@ void fs_ls(struct fs_t* fs) {
   // Step 1: read in each inode and print!
   // Move file pointer to the position of the 1st inode (129th byte)
   // for(i=0;i<16;i++)
+  for (int i = 0; i < 16; ++i) {
     // Read in a inode
     // If the inode is in-use
+    if (currNode->used == 1) {
       // print the "name" and "size" fields from the inode
+      printf("%s %d", currNode->name, currNode->size);
+    }
   // end for
+  }
+    
+    
 }
 
 // read this block from this file
