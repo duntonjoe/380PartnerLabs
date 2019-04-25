@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "Jobs.cpp"
+#include "Jobs.h"
 
 int main(int argc, char *argv[]) {
   Jobs list;
